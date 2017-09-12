@@ -14,26 +14,38 @@ function mostMap( fn, stream){
 		_catchEnd= end
 	})
 
-	var reading= stream.map(fn)
-	function loop(){
-		return reading
-			.chain(most.fromPromise)
-			.recoverWith( err=> {
-				console.log("RECOVER", err)
-				if( _catchAdd){
-					_catchAdd( err)
-				}
-				return loop()
+	var _thenAdd, _thenEnd
+	var $then= create(function(add, end){
+		if( _thenEnd){
+			end()
+			return
+		}
+		_thenAdd= add
+		_thenEnd= end
+	})
+
+	stream.forEach(function(x){
+		Promise
+			.resolve( fn( x))
+			.then(function( y){
+				_thenAdd( y)
 			})
-	}
-	var $then= loop()
-	//$then.drain().then(function(){
-	//	if( _catchEnd){
-	//		_catchEnd()
-	//	}else{
-	//		_catchEnd= true
-	//	}
-	//})
+			.catch(function( err){
+				_catchAdd( err)
+			})
+	}).then(function(){
+		if( _catchEnd){
+			_catchEnd()
+		}else{
+			_catchEnd= true
+		}
+		if( _thenEnd){
+			_thenEnd()
+		}else{
+			_thenEnd= true
+		}
+	})
+
 	return {
 		$then,
 		$catch
@@ -42,13 +54,13 @@ function mostMap( fn, stream){
 
 if( require.main=== module){
 	process.on("unhandledRejection", console.error)
-	//var res= mostMap( most.from([42, -1, 43, -2, 44, -3, -4, 55, 60, -5]), function( n){
+	var stream= most.from([42, -1, 43, -2, 44, -3, -4, 55, 60, -5])
 	var res= mostMap(  function( n){
 		if( n< 0){
 			return Promise.reject(n)
 		}
 		return Promise.resolve(n)
-	}, most.from([42, -1, 55]))
+	}, stream)
 	res.$catch.forEach( n=> console.log(n, "catch")).then( _=> console.log("done catch"))
 	res.$then.forEach( n=> console.log(n, "then")).then( _=> console.log("done then"))
 }
