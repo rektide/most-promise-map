@@ -1,0 +1,17 @@
+{
+	"name": "most-then-and-catch",
+	"version": "1.0.0",
+	"description": "",
+	"main": "most-then-and-catch.js",
+	"dependencies": {
+		"@most/create": "^2.0.1",
+		"most": "^1.7.0"
+	},
+	"devDependencies": {},
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"keywords": [],
+	"author": "rektide de la faye",
+	"license": "MIT"
+}
