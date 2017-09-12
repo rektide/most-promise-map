@@ -1,8 +1,8 @@
 {
-	"name": "most-then-and-catch",
+	"name": "most-promise-map",
 	"version": "1.0.0",
-	"description": "",
-	"main": "most-then-and-catch.js",
+	"description": "Map over a promise stream, splitting into resolved & rejected streams",
+	"main": "most-promise-map.js",
 	"dependencies": {
 		"@most/create": "^2.0.1",
 		"most": "^1.7.0"
